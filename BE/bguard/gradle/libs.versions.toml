@@ -1,0 +1,17 @@
+[versions]
+lombok = "1.18.46"
+spring-boot = "4.0.6"
+spring-management = "1.1.7"
+#spring-devtools = ""
+
+[libraries]
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+spring-boot-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot" }
+spring-boot-devtools = {module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot"}
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-management" }
+
+
+
