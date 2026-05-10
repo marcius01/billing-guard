@@ -12,12 +12,17 @@ repositories {
 
 dependencies {
     implementation(libs.spring.boot.web)
+    implementation(libs.spring.boot.jpa)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
     testAnnotationProcessor(libs.lombok)
     testCompileOnly(libs.lombok)
+    implementation (libs.postgres.driver)
     testImplementation(platform("org.junit:junit-bom:6.0.0"))
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation(libs.spring.boot.webmvc.test)
+    // bguard modules
+    implementation(project(":domain"))
 }
 
 tasks.test {
