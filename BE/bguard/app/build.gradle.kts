@@ -22,13 +22,16 @@ repositories {
 
 dependencies {
     implementation(libs.spring.boot.web)
+    implementation(libs.spring.boot.jpa)
     developmentOnly(libs.spring.boot.devtools)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
+//    implementation("org.postgresql:postgresql")
     testAnnotationProcessor(libs.lombok)
     testCompileOnly(libs.lombok)
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.21")
     // bguard modules
     implementation(project(":api"))
 }
