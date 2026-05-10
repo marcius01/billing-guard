@@ -18,6 +18,8 @@ dependencies {
     testAnnotationProcessor(libs.lombok)
     testCompileOnly(libs.lombok)
     implementation (libs.postgres.driver)
+    implementation(libs.mapstruct)
+    annotationProcessor(libs.mapstruct.processor)
     testImplementation(platform("org.junit:junit-bom:6.0.0"))
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation(libs.spring.boot.webmvc.test)
