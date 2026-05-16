@@ -9,7 +9,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import tech.skullprogrammer.bguard.api.controller.CustomerController;
 import tech.skullprogrammer.bguard.api.dto.CustomerRequest;
+import tech.skullprogrammer.bguard.api.dto.ErrorResponse;
 import tech.skullprogrammer.bguard.api.service.CustomerService;
+import tech.skullprogrammer.bguard.domain.SkullException;
 import tech.skullprogrammer.bguard.domain.entity.Customer;
 
 import java.util.List;
@@ -37,9 +39,12 @@ public class CustomerControllerTest {
     }
 
     @Test
-    public void testSaveCustomer() {
+    public void testSaveCustomerOK() {
         CustomerRequest customerRequest = new CustomerRequest();
         customerRequest.setName("Mario");
+        customerRequest.setEmail("mario@fake.com");
+        customerRequest.setExternalCode("111");
+        customerRequest.setTaxCode("111");
         Customer customer = new Customer();
         customer.setName("Mario");
         customer.setId(111L);
@@ -48,4 +53,18 @@ public class CustomerControllerTest {
                 .isCreated()
                 .expectHeader().location("http://localhost/customer/111");
     }
+
+    @Test
+    public void testSaveCustomerKO() {
+        CustomerRequest request = CustomerRequest.builder().name("Mario").build();
+        Customer customer = new Customer();
+        customer.setName("Mario");
+        customer.setId(111L);
+        given(customerService.saveCustomer(any(CustomerRequest.class))).willReturn(customer);
+        ErrorResponse responseBody = testClient.post().uri("/customer").body(request).exchange().expectStatus()
+                .isEqualTo(SkullException.ErrorType.INVALID_DATA.getHttpStatus())
+                .expectBody(ErrorResponse.class)
+                .returnResult().getResponseBody();
+    }
+
 }

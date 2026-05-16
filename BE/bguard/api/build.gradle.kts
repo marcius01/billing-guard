@@ -20,6 +20,7 @@ dependencies {
     implementation (libs.postgres.driver)
     implementation(libs.mapstruct)
     annotationProcessor(libs.mapstruct.processor)
+    implementation(libs.bean.validation)
     testImplementation(platform("org.junit:junit-bom:6.0.0"))
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation(libs.spring.boot.webmvc.test)

@@ -16,6 +16,7 @@ spring-boot-test = {module="org.springframework.boot:spring-boot-starter-test", 
 postgres-driver = {module="org.postgresql:postgresql", version.ref="postgres-version"}
 mapstruct = {module="org.mapstruct:mapstruct", version.ref="mapstruct-version"}
 mapstruct-processor = {module="org.mapstruct:mapstruct-processor", version.ref="mapstruct-version"}
+bean-validation = {module="org.springframework.boot:spring-boot-starter-validation", version.ref="spring-boot"}
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }

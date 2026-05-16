@@ -1,5 +1,6 @@
 package tech.skullprogrammer.bguard.api.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class CustomerController {
     }
 
     @PostMapping(value = "/customer")
-    public ResponseEntity<Void> saveCustomer(@RequestBody CustomerRequest customerRequest) {
+    public ResponseEntity<Void> saveCustomer(@RequestBody @Valid CustomerRequest customerRequest) {
         Customer customer = customerService.saveCustomer(customerRequest);
         URI locationUri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(customer.getId()).toUri();
         return ResponseEntity.created(locationUri)
