@@ -44,8 +44,8 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/customer/{id}")
-    public Customer getCustomerById(@PathVariable Long id) {
-        return customerService.getCustomerById(id);
+    public CustomerResponse getCustomerById(@PathVariable("id") Long id) {
+        return customerMapper.toResponseDto(customerService.getCustomerById(id));
     }
 
     @PostMapping(value = "/customer")

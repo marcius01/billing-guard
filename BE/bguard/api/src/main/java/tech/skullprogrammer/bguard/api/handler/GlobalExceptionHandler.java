@@ -8,6 +8,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import tech.skullprogrammer.bguard.api.dto.ErrorResponse;
 import tech.skullprogrammer.bguard.domain.SkullException;
 
@@ -30,6 +31,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleException(MethodArgumentNotValidException e) {
         Map<String, @Nullable String> payload = e.getFieldErrors().stream().collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+        SkullException.ErrorType errorType = SkullException.ErrorType.INVALID_DATA;
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .message(e.getMessage())
+                .error(errorType)
+                .payload(payload)
+                .build();
+        return ResponseEntity.status(errorType.getHttpStatus())
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleException(MethodArgumentTypeMismatchException e) {
+        Map<String, @Nullable String> payload = Map.of(e.getName(), e.getMessage());
         SkullException.ErrorType errorType = SkullException.ErrorType.INVALID_DATA;
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .message(e.getMessage())

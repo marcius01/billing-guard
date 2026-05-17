@@ -1,11 +1,13 @@
 package tech.skullprogrammer.bguard.test.api;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.internal.matchers.Any;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -13,9 +15,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import tech.skullprogrammer.bguard.api.controller.CustomerController;
 import tech.skullprogrammer.bguard.api.dto.CustomerRequest;
+import tech.skullprogrammer.bguard.api.dto.CustomerResponse;
 import tech.skullprogrammer.bguard.api.dto.ErrorResponse;
 import tech.skullprogrammer.bguard.api.dto.PaginationResponse;
 import tech.skullprogrammer.bguard.api.mapper.CustomerMapper;
+import tech.skullprogrammer.bguard.api.mapper.CustomerMapperImpl;
 import tech.skullprogrammer.bguard.api.service.CustomerService;
 import tech.skullprogrammer.bguard.domain.SkullException;
 import tech.skullprogrammer.bguard.domain.entity.Customer;
@@ -25,6 +29,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+@Import(CustomerMapperImpl.class)
 @WebMvcTest(CustomerController.class)
 @AutoConfigureRestTestClient
 public class CustomerControllerTest {
@@ -36,6 +41,34 @@ public class CustomerControllerTest {
 
     @MockitoBean
     private CustomerService customerService;
+
+    @Test
+    public void testFindCustomerByIdOK() {
+        Customer customer = new Customer();
+        customer.setName("Mario");
+        customer.setId(111L);
+        given(customerService.getCustomerById(any()))
+                .willReturn(customer);
+        CustomerResponse responseBody = testClient.get().uri("/customer/111")
+                .exchange().expectStatus()
+                .isOk().returnResult(CustomerResponse.class)
+                .getResponseBody();
+        Assertions.assertEquals("Mario", responseBody.getName());
+    }
+
+    @Test
+    public void testFindCustomerByIdKO() {
+        Customer customer = new Customer();
+        customer.setName("Mario");
+        customer.setId(111L);
+        given(customerService.getCustomerById(any()))
+                .willReturn(customer);
+        CustomerResponse responseBody = testClient.get().uri("/customer/1ko")
+                .exchange().expectStatus()
+                .isOk().returnResult(CustomerResponse.class)
+                .getResponseBody();
+        Assertions.assertEquals("Mario", responseBody.getName());
+    }
 
     @Test
     public void testAllCustomers() {
