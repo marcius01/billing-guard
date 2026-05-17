@@ -1,13 +1,13 @@
 package tech.skullprogrammer.bguard.api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tech.skullprogrammer.bguard.api.dto.CustomerRequest;
 import tech.skullprogrammer.bguard.api.mapper.CustomerMapper;
 import tech.skullprogrammer.bguard.domain.entity.Customer;
 import tech.skullprogrammer.bguard.domain.repository.CustomerRepository;
-
-import java.util.List;
 
 @Service
 public class CustomerService {
@@ -22,8 +22,9 @@ public class CustomerService {
         this.customerMapper = mapper;
     }
 
-    public List<Customer> allCustomers() {
-        return customerRepository.findAll();
+    public Page<Customer> allCustomers(Pageable pageable) {
+        Page<Customer> result = customerRepository.findAll(pageable);
+        return result;
     }
 
     public Customer getCustomerById(Long id) {

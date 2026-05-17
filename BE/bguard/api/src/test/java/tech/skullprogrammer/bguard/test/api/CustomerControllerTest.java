@@ -2,14 +2,20 @@ package tech.skullprogrammer.bguard.test.api;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
+import org.mockito.internal.matchers.Any;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import tech.skullprogrammer.bguard.api.controller.CustomerController;
 import tech.skullprogrammer.bguard.api.dto.CustomerRequest;
 import tech.skullprogrammer.bguard.api.dto.ErrorResponse;
+import tech.skullprogrammer.bguard.api.dto.PaginationResponse;
+import tech.skullprogrammer.bguard.api.mapper.CustomerMapper;
 import tech.skullprogrammer.bguard.api.service.CustomerService;
 import tech.skullprogrammer.bguard.domain.SkullException;
 import tech.skullprogrammer.bguard.domain.entity.Customer;
@@ -25,6 +31,8 @@ public class CustomerControllerTest {
 
     @Autowired
     private RestTestClient testClient;
+    @Autowired
+    private CustomerMapper customerMapper;
 
     @MockitoBean
     private CustomerService customerService;
@@ -33,9 +41,17 @@ public class CustomerControllerTest {
     public void testAllCustomers() {
         Customer customer = new Customer();
         customer.setName("Mario");
-        given(customerService.allCustomers())
-                .willReturn(List.of(customer));
-        testClient.get().uri("/customer").exchange().expectStatus().isOk();
+        customer.setId(111L);
+        Page<Customer> customerPage = new PageImpl<>(
+                List.of(customer),
+                PageRequest.of(0, 21),
+                1
+        );
+        given(customerService.allCustomers(any()))
+                .willReturn(customerPage);
+        PaginationResponse responseBody = testClient.get().uri("/customer").exchange().expectStatus()
+                .isOk().returnResult(PaginationResponse.class)
+                .getResponseBody();
     }
 
     @Test
