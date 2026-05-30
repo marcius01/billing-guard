@@ -9,8 +9,10 @@ import tech.skullprogrammer.bguard.api.mapper.SupplyPointMapper;
 import tech.skullprogrammer.bguard.domain.SkullException;
 import tech.skullprogrammer.bguard.domain.entity.Customer;
 import tech.skullprogrammer.bguard.domain.entity.SupplyPoint;
+import tech.skullprogrammer.bguard.domain.enumeration.ESupplyPointStatus;
 import tech.skullprogrammer.bguard.domain.repository.SupplyPointRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -39,6 +41,10 @@ public class SupplyPointService {
 
     public SupplyPoint saveSupplyPoint(SupplyPointRequest supplyPointRequest){
         SupplyPoint supplyPoint = supplyPointMapper.toEntity(supplyPointRequest);
+        boolean exists = supplyPointRepository.existsByTypeAndCode(supplyPointRequest.getType(), supplyPointRequest.getCode());
+        if (exists) throw new SkullException(SkullException.ErrorType.ENTITY_ALREADY_EXISTS);
+        supplyPoint.setStatus(supplyPoint.getStatus() == null ? ESupplyPointStatus.ACTIVE : supplyPoint.getStatus());
+        supplyPoint.setCreatedAt(supplyPoint.getCreatedAt() == null ? LocalDate.now() : supplyPoint.getCreatedAt());
         Customer customer = customerService.getCustomerById(supplyPointRequest.getCustomerId());
         if(customer != null) throw new SkullException(SkullException.ErrorType.CUSTOMER_NOT_FOUND);
         supplyPointRepository.save(supplyPoint);

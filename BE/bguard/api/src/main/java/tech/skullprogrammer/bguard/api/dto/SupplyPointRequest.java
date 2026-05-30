@@ -19,6 +19,7 @@ public class SupplyPointRequest {
 
     @NotBlank
     private String code;
+    @NotNull
     private ESupplyPointType type;
     @NotBlank
     private String region;
