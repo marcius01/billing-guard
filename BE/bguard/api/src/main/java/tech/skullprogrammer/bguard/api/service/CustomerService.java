@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tech.skullprogrammer.bguard.api.dto.CustomerRequest;
 import tech.skullprogrammer.bguard.api.mapper.CustomerMapper;
+import tech.skullprogrammer.bguard.domain.SkullException;
 import tech.skullprogrammer.bguard.domain.entity.Customer;
 import tech.skullprogrammer.bguard.domain.repository.CustomerRepository;
 
@@ -32,6 +33,8 @@ public class CustomerService {
     }
 
     public Customer saveCustomer(CustomerRequest customerRequest) {
+        boolean exists = customerRepository.existsByExternalCode(customerRequest.getExternalCode());
+        if(exists) throw new SkullException(SkullException.ErrorType.CUSTOMER_ALREADY_EXISTS);
         Customer customer = customerMapper.toEntity(customerRequest);
         return customerRepository.save(customer);
     }
