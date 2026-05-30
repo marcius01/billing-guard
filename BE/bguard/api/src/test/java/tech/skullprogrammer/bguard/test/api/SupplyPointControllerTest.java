@@ -9,13 +9,15 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import tech.skullprogrammer.bguard.api.controller.SupplyPointController;
+import tech.skullprogrammer.bguard.api.dto.ErrorResponse;
+import tech.skullprogrammer.bguard.api.dto.SupplyPointRequest;
 import tech.skullprogrammer.bguard.api.dto.SupplyPointResponse;
 import tech.skullprogrammer.bguard.api.mapper.SupplyPointMapperImpl;
 import tech.skullprogrammer.bguard.api.service.SupplyPointService;
+import tech.skullprogrammer.bguard.domain.SkullException;
 import tech.skullprogrammer.bguard.domain.entity.SupplyPoint;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 
 @Import(SupplyPointMapperImpl.class)
@@ -42,6 +44,22 @@ public class SupplyPointControllerTest {
                 .isOk().returnResult(SupplyPointResponse.class)
                 .getResponseBody();
         Assertions.assertEquals("NY", responseBody.getCity());
+    }
+
+    @Test
+    public void testSaveCustomerKO() {
+        SupplyPointRequest request = SupplyPointRequest.builder()
+                .city("NY")
+                .region("New York")
+                .code("CODE1")
+                .customerId(111L)
+                .build();
+        System.out.println("---> " + request.toString() + "");
+        given(supplyPointService.saveSupplyPoint(any(SupplyPointRequest.class))).willThrow(new SkullException(SkullException.ErrorType.CUSTOMER_NOT_FOUND));
+        ErrorResponse responseBody = testClient.post().uri("/supply-points").body(request).exchange().expectStatus()
+                .isEqualTo(SkullException.ErrorType.CUSTOMER_NOT_FOUND.getHttpStatus())
+                .expectBody(ErrorResponse.class)
+                .returnResult().getResponseBody();
     }
 
 }
