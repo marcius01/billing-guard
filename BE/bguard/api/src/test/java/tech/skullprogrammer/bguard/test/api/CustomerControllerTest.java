@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import tech.skullprogrammer.bguard.api.controller.CustomerController;
@@ -23,6 +24,8 @@ import tech.skullprogrammer.bguard.api.mapper.CustomerMapperImpl;
 import tech.skullprogrammer.bguard.api.service.CustomerService;
 import tech.skullprogrammer.bguard.domain.SkullException;
 import tech.skullprogrammer.bguard.domain.entity.Customer;
+import tech.skullprogrammer.bguard.test.SpringTestConfiguration;
+import tech.skullprogrammer.bguard.test.SpringTestConfigurationMVC;
 
 import java.util.List;
 
@@ -31,6 +34,7 @@ import static org.mockito.BDDMockito.given;
 
 @Import(CustomerMapperImpl.class)
 @WebMvcTest(CustomerController.class)
+@ContextConfiguration(classes = SpringTestConfigurationMVC.class)
 @AutoConfigureRestTestClient
 public class CustomerControllerTest {
 
@@ -63,11 +67,11 @@ public class CustomerControllerTest {
         customer.setId(111L);
         given(customerService.getCustomerById(any()))
                 .willReturn(customer);
-        CustomerResponse responseBody = testClient.get().uri("/customer/1ko")
+        ErrorResponse responseBody = testClient.get().uri("/customer/1ko")
                 .exchange().expectStatus()
-                .isOk().returnResult(CustomerResponse.class)
-                .getResponseBody();
-        Assertions.assertEquals("Mario", responseBody.getName());
+                .isEqualTo(SkullException.ErrorType.INVALID_DATA.getHttpStatus())
+                .expectBody(ErrorResponse.class)
+                .returnResult().getResponseBody();
     }
 
     @Test

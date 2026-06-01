@@ -4,19 +4,22 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.springframework.data.domain.Page;
-import tech.skullprogrammer.bguard.api.dto.CustomerRequest;
-import tech.skullprogrammer.bguard.api.dto.CustomerResponse;
+import tech.skullprogrammer.bguard.api.dto.InvoiceDTO;
 import tech.skullprogrammer.bguard.api.dto.PaginationResponse;
-import tech.skullprogrammer.bguard.domain.entity.Customer;
+import tech.skullprogrammer.bguard.api.dto.SupplyPointResponse;
+import tech.skullprogrammer.bguard.domain.entity.Invoice;
+import tech.skullprogrammer.bguard.domain.entity.SupplyPoint;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface CustomerMapper {
+public interface InvoiceMapper {
 
-    Customer toEntity(CustomerRequest customerRequest);
-    CustomerRequest toRequestDto(Customer customer);
-    CustomerResponse toResponseDto(Customer customer);
+    InvoiceDTO toDTO (Invoice invoice);
+    List<InvoiceDTO> toDTO (List<Invoice> invoices);
     @Mapping(target = "totalElements", source = "totalElements")
     @Mapping(target = "numberOfElements", source = "numberOfElements")
     @Mapping(target = "page", source = "number")
-    PaginationResponse<CustomerResponse> toRequestDto(Page<Customer> page);
+    PaginationResponse<InvoiceDTO> toResponseDto(Page<Invoice> page);
+
 }

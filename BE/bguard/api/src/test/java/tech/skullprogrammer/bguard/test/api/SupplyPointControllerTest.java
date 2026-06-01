@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import tech.skullprogrammer.bguard.api.controller.SupplyPointController;
@@ -17,12 +18,14 @@ import tech.skullprogrammer.bguard.api.service.SupplyPointService;
 import tech.skullprogrammer.bguard.domain.SkullException;
 import tech.skullprogrammer.bguard.domain.entity.SupplyPoint;
 import tech.skullprogrammer.bguard.domain.enumeration.ESupplyPointType;
+import tech.skullprogrammer.bguard.test.SpringTestConfigurationMVC;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @Import(SupplyPointMapperImpl.class)
 @WebMvcTest(SupplyPointController.class)
+@ContextConfiguration(classes = SpringTestConfigurationMVC.class)
 @AutoConfigureRestTestClient
 public class SupplyPointControllerTest {
 

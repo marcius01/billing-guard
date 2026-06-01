@@ -16,6 +16,7 @@ public class PaginationResponse<T> {
     private List<T> content;
     private int page;
     private int size;
+    private int numberOfElements;
     private int totalPages;
     private int totalElements;
 

@@ -17,7 +17,8 @@ public interface SupplyPointMapper {
     SupplyPointResponse toResponseDto(SupplyPoint supplyPoint);
     List<SupplyPointResponse> toResponseDto(List<SupplyPoint> supplyPoints);
     SupplyPoint toEntity(SupplyPointRequest supplyPointRequest);
-    @Mapping(target = "totalElements", source = "numberOfElements")
+    @Mapping(target = "totalElements", source = "totalElements")
+    @Mapping(target = "numberOfElements", source = "numberOfElements")
     @Mapping(target = "page", source = "number")
     PaginationResponse<SupplyPointResponse> toResponseDto(Page<SupplyPoint> page);
 }

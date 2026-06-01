@@ -36,7 +36,7 @@ public class CustomerController {
     public PaginationResponse<CustomerResponse> allCustomers(
             @RequestParam(value = "page", defaultValue = "0") @PositiveOrZero() int page,
             @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size,
-            @RequestParam(value = "sort", defaultValue = "name,asc") String sort
+            @RequestParam(value = "sort", defaultValue = "id,asc") String sort
     ) {
         Pageable pageable = PageRequestFactory.create(page, size, sort);
         Page<Customer> rawResult = customerService.allCustomers(pageable);

@@ -34,7 +34,7 @@ public class SupplyPointController {
     public PaginationResponse<SupplyPointResponse> getAllSupplyPoints(
             @RequestParam(value = "page", defaultValue = "0") @PositiveOrZero() int page,
             @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size,
-            @RequestParam(value = "sort", defaultValue = "name,asc") String sort
+            @RequestParam(value = "sort", defaultValue = "id,asc") String sort
     ) {
         Pageable pageable = PageRequestFactory.create(page, size, sort);
         return supplyPointMapper.toResponseDto(supplyPointService.getAllSupplyPoint(pageable));

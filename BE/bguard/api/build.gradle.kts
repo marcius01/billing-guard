@@ -24,6 +24,7 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:6.0.0"))
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation(libs.spring.boot.webmvc.test)
+    testRuntimeOnly("com.h2database:h2:2.4.240")
     // bguard modules
     implementation(project(":domain"))
 }

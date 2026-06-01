@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tech.skullprogrammer.bguard.api.dto.SupplyPointRequest;
 import tech.skullprogrammer.bguard.api.mapper.SupplyPointMapper;
 import tech.skullprogrammer.bguard.domain.SkullException;
@@ -39,6 +40,7 @@ public class SupplyPointService {
         return supplyPointRepository.findAll(pageable);
     }
 
+    @Transactional
     public SupplyPoint saveSupplyPoint(SupplyPointRequest supplyPointRequest){
         SupplyPoint supplyPoint = supplyPointMapper.toEntity(supplyPointRequest);
         boolean exists = supplyPointRepository.existsByTypeAndCode(supplyPointRequest.getType(), supplyPointRequest.getCode());
