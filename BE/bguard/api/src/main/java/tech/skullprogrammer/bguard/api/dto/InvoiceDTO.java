@@ -4,11 +4,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Builder;
 import lombok.Data;
 import tech.skullprogrammer.bguard.domain.enumeration.EInvoiceStatus;
 
 import java.time.LocalDate;
 
+@Builder
 @Data
 public class InvoiceDTO {
     @NotBlank

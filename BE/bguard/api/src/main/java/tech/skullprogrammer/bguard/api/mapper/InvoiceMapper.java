@@ -21,5 +21,6 @@ public interface InvoiceMapper {
     @Mapping(target = "numberOfElements", source = "numberOfElements")
     @Mapping(target = "page", source = "number")
     PaginationResponse<InvoiceDTO> toResponseDto(Page<Invoice> page);
+    Invoice toEntity(InvoiceDTO invoiceDTO);
 
 }

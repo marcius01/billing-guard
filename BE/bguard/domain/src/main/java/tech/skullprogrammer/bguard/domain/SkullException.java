@@ -3,12 +3,15 @@ package tech.skullprogrammer.bguard.domain;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import java.util.Map;
+
 @Getter
 public class SkullException extends RuntimeException{
 
     public enum ErrorType {
         ENTITY_NOT_FOUND (HttpStatus.NOT_FOUND),
         CUSTOMER_NOT_FOUND (HttpStatus.NOT_FOUND),
+        SUPPLY_POINT_NOT_FOUND (HttpStatus.NOT_FOUND),
         CUSTOMER_ALREADY_EXISTS (HttpStatus.CONFLICT),
         ENTITY_ALREADY_EXISTS (HttpStatus.CONFLICT),
         INVALID_DATA (HttpStatus.UNPROCESSABLE_CONTENT),
@@ -25,6 +28,7 @@ public class SkullException extends RuntimeException{
     }
 
     private final ErrorType errorType;
+    private Map<String, String> payload;
 
 
     public SkullException(String message, ErrorType errorType) {
@@ -34,5 +38,10 @@ public class SkullException extends RuntimeException{
 
     public SkullException(ErrorType errorType) {
         this.errorType = errorType;
+    }
+
+    public SkullException(ErrorType errorType, Map<String, String> payload) {
+        this.errorType = errorType;
+        this.payload = payload;
     }
 }
