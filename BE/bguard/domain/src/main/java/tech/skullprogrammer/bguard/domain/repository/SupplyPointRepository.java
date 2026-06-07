@@ -9,4 +9,6 @@ import tech.skullprogrammer.bguard.domain.enumeration.ESupplyPointType;
 public interface SupplyPointRepository extends JpaRepository<SupplyPoint, Long> {
 
     boolean existsByTypeAndCode(ESupplyPointType type, String code);
+
+    SupplyPoint findByIdAndCustomerId(Long id, Long customerId);
 }

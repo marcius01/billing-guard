@@ -79,6 +79,9 @@ public class InvoiceServiceTest {
         InvoiceDTO inconsistentInvoice4 = buildInconsistentInvoice4();
         SkullException skullException2 = Assertions.assertThrows(SkullException.class, () -> invoiceService.saveInvoice(inconsistentInvoice4));
         Assertions.assertEquals(2, skullException2.getPayload().size());
+        InvoiceDTO inconsistentInvoice5 = buildInconsistentInvoice5();
+        SkullException skullException3 = Assertions.assertThrows(SkullException.class, () -> invoiceService.saveInvoice(inconsistentInvoice5));
+        Assertions.assertEquals(SkullException.ErrorType.SUPPLY_POINT_NOT_FOUND, skullException3.getErrorType());
     }
 
     private InvoiceDTO buildConsistentInvoice() {
@@ -155,6 +158,23 @@ public class InvoiceServiceTest {
     private InvoiceDTO buildInconsistentInvoice4() {
         Customer customer = customerRepository.findAll().getFirst();
         SupplyPoint supplyPoint = supplyPointRepository.findAll().getFirst();
+        return InvoiceDTO.builder()
+                .invoiceNumber("INV-TEST-NOT4")
+                .issueDate(LocalDate.of(2024, 6, 1))
+                .dueDate(LocalDate.of(2024, 6, 30))
+                .periodStart(LocalDate.of(2024, 5, 1))
+                .periodEnd(LocalDate.of(2024, 5, 31))
+                .amount(300.00)
+                .paidAmount(10.00)
+                .status(EInvoiceStatus.PAID)
+                .supplyPointId(supplyPoint.getId())
+                .customerId(customer.getId())
+                .build();
+    }
+
+    private InvoiceDTO buildInconsistentInvoice5() {
+        Customer customer = customerRepository.findAll().getFirst();
+        SupplyPoint supplyPoint = supplyPointRepository.findAll().get(1);
         return InvoiceDTO.builder()
                 .invoiceNumber("INV-TEST-NOT4")
                 .issueDate(LocalDate.of(2024, 6, 1))

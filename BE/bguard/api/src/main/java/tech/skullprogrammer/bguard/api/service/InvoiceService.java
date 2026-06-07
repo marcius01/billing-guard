@@ -52,7 +52,8 @@ public class InvoiceService {
     public Invoice saveInvoice(InvoiceDTO invoiceDTO) {
         Customer customer = customerService.getCustomerById(invoiceDTO.getCustomerId());
         if(customer == null) throw new SkullException(SkullException.ErrorType.CUSTOMER_NOT_FOUND);
-        SupplyPoint supplyPoint = supplyPointService.getSupplyPointById(invoiceDTO.getSupplyPointId());
+        SupplyPoint supplyPoint = supplyPointService.getSupplyPointByIdAndCustomerId(invoiceDTO.getSupplyPointId(), invoiceDTO.getCustomerId());
+//        SupplyPoint supplyPoint = supplyPointService.getSupplyPointById(invoiceDTO.getSupplyPointId());
         if(supplyPoint == null) throw new SkullException(SkullException.ErrorType.SUPPLY_POINT_NOT_FOUND);
         Map<String, String> errors = InvoiceChecker.isInvoiceConsistent(invoiceDTO);
         if (!errors.isEmpty()) throw new SkullException(SkullException.ErrorType.INVALID_DATA, errors);

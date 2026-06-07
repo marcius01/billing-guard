@@ -17,7 +17,6 @@ import tech.skullprogrammer.bguard.api.service.SupplyPointService;
 import tech.skullprogrammer.bguard.domain.entity.SupplyPoint;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 public class SupplyPointController {

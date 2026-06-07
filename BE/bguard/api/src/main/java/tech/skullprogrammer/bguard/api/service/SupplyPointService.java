@@ -36,6 +36,9 @@ public class SupplyPointService {
         return supplyPointRepository.findById(id).orElse(null);
     }
 
+    public SupplyPoint getSupplyPointByIdAndCustomerId(Long id, Long customerId){
+        return supplyPointRepository.findByIdAndCustomerId(id, customerId);
+    }
     public Page<SupplyPoint> getAllSupplyPoint(Pageable pageable){
         return supplyPointRepository.findAll(pageable);
     }
