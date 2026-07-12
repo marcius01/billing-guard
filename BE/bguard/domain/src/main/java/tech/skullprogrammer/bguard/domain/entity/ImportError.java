@@ -1,20 +1,22 @@
 package tech.skullprogrammer.bguard.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class ImportError {
-    //id, importJobId, rowNumber, fieldName, rawValue, errorCode, message, createdAt
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private int rowNumber;
+    private long rowNumber;
     private String fieldName;
     private String rawValue;
     private String errorCode;

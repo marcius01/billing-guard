@@ -1,5 +1,6 @@
 package tech.skullprogrammer.bguard.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -27,12 +28,16 @@ public class InvoiceDTO {
     @PastOrPresent
     private LocalDate periodEnd;
     @NotNull
-    @PositiveOrZero
+    //@PositiveOrZero
     private Double amount;
     private Double paidAmount;
     private EInvoiceStatus status;
-    @NotNull
+//    @NotNull
     private Long supplyPointId;
-    @NotNull
+//    @NotNull
     private Long customerId;
+    @JsonIgnore
+    private String customerCode;
+    @JsonIgnore
+    private String supplyPointCode;
 }

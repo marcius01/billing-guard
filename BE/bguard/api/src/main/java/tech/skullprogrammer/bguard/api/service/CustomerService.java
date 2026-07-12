@@ -32,6 +32,10 @@ public class CustomerService {
         return customerRepository.findById(id).orElse(null);
     }
 
+    public Customer getCustomerByCode(String code) {
+        return customerRepository.findByExternalCode(code);
+    }
+
     public Customer saveCustomer(CustomerRequest customerRequest) {
         boolean exists = customerRepository.existsByExternalCode(customerRequest.getExternalCode());
         if(exists) throw new SkullException(SkullException.ErrorType.CUSTOMER_ALREADY_EXISTS);

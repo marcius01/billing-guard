@@ -7,4 +7,6 @@ import tech.skullprogrammer.bguard.domain.entity.Invoice;
 public interface InvoiceRepository extends JpaRepository<Invoice, Long>,
         JpaSpecificationExecutor<Invoice> {
 
+    boolean existsByInvoiceNumberAndSupplyPointId(String invoiceNumber, Long supplyPointId);
+
 }

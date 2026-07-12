@@ -15,21 +15,30 @@ public class InvoiceChecker {
         if (invoiceDTO.getPaidAmount() != null && invoiceDTO.getPaymentDate() == null) {
             errors.put("paidAmount-Date", "paidAmount must be null if paymentDate is null");
         }
-        if (List.of(EInvoiceStatus.ISSUED, EInvoiceStatus.UNPAID).contains(invoiceDTO.getStatus())) {
-            if(invoiceDTO.getPaidAmount() != null && invoiceDTO.getPaidAmount() !=0){
-                errors.put("paidAmount-Status", "paidAmount must be null if status is ISSUED or UNPAID");
+        if (invoiceDTO.getStatus() != null) {
+            if (List.of(EInvoiceStatus.ISSUED, EInvoiceStatus.UNPAID).contains(invoiceDTO.getStatus())) {
+                if (invoiceDTO.getPaidAmount() != null && invoiceDTO.getPaidAmount() != 0) {
+                    errors.put("paidAmount-Status", "paidAmount must be null if status is ISSUED or UNPAID");
+                }
             }
-        }
-        if (EInvoiceStatus.PARTIALLY_PAID.equals(invoiceDTO.getStatus())) {
-            if(invoiceDTO.getPaidAmount() == null || invoiceDTO.getPaidAmount() == 0 || invoiceDTO.getPaidAmount() >= invoiceDTO.getAmount()) {
-                errors.put("paidAmount-Status", "paidAmount must be greater than 0 and less than amount if status is PARTIALLY_PAID");
+            if (EInvoiceStatus.PARTIALLY_PAID.equals(invoiceDTO.getStatus())) {
+                if (invoiceDTO.getPaidAmount() == null || invoiceDTO.getPaidAmount() == 0 || invoiceDTO.getPaidAmount() >= invoiceDTO.getAmount()) {
+                    errors.put("paidAmount-Status", "paidAmount must be greater than 0 and less than amount if status is PARTIALLY_PAID");
+                }
             }
-        }
-        if (EInvoiceStatus.PAID.equals(invoiceDTO.getStatus())) {
-            if(invoiceDTO.getPaidAmount() == null || !invoiceDTO.getPaidAmount().equals(invoiceDTO.getAmount())) {
-                errors.put("paidAmount-Status", "paidAmount must be equal to amount if status is PAID");
+            if (EInvoiceStatus.PAID.equals(invoiceDTO.getStatus())) {
+                if (invoiceDTO.getPaidAmount() == null || !invoiceDTO.getPaidAmount().equals(invoiceDTO.getAmount())) {
+                    errors.put("paidAmount-Status", "paidAmount must be equal to amount if status is PAID");
+                }
             }
         }
         return errors;
+    }
+
+    public static EInvoiceStatus getInvoiceStatus(InvoiceDTO invoiceDTO) {
+        if (invoiceDTO.getPaidAmount() == null) return EInvoiceStatus.UNPAID;
+        if (invoiceDTO.getPaidAmount() == 0 && invoiceDTO.getAmount() != 0) return EInvoiceStatus.ISSUED;
+        if (invoiceDTO.getPaidAmount() < invoiceDTO.getAmount()) return EInvoiceStatus.PARTIALLY_PAID;
+        return EInvoiceStatus.PAID;
     }
 }

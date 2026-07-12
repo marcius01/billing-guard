@@ -13,8 +13,10 @@ public class SkullException extends RuntimeException{
         CUSTOMER_NOT_FOUND (HttpStatus.NOT_FOUND),
         SUPPLY_POINT_NOT_FOUND (HttpStatus.NOT_FOUND),
         CUSTOMER_ALREADY_EXISTS (HttpStatus.CONFLICT),
+        INVOICE_ALREADY_EXISTS (HttpStatus.CONFLICT),
         ENTITY_ALREADY_EXISTS (HttpStatus.CONFLICT),
         INVALID_DATA (HttpStatus.UNPROCESSABLE_CONTENT),
+        CSV_ERROR (HttpStatus.BAD_REQUEST),
         UNEXPECTED_ERROR (HttpStatus.INTERNAL_SERVER_ERROR);
 
         private final HttpStatus status;

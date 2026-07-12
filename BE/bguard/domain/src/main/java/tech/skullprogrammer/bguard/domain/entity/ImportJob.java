@@ -3,9 +3,11 @@ package tech.skullprogrammer.bguard.domain.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 import tech.skullprogrammer.bguard.domain.enumeration.EImportJobStatus;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -23,9 +25,9 @@ public class ImportJob {
     private int processedRows;
     private int discardedRows;
     private int anomalyRows;
-    private LocalDate startedAt;
-    private LocalDate completedAt;
+    private LocalDateTime startedAt;
+    private LocalDateTime completedAt;
     private String errorMessage;
-    @OneToMany(mappedBy = "importJob")
+    @OneToMany(mappedBy = "importJob", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ImportError> errors;
 }

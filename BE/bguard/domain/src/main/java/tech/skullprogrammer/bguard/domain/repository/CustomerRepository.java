@@ -10,5 +10,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 //    @Query("select c from Customer c")
 //    public List<Customer> findAll();
 
-    public boolean existsByExternalCode(String externalCode);
+    boolean existsByExternalCode(String externalCode);
+
+    Customer findByExternalCode(String externalCode);
 }

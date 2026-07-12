@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.springframework.data.domain.Page;
 import tech.skullprogrammer.bguard.api.dto.InvoiceDTO;
+import tech.skullprogrammer.bguard.api.dto.JobCsvRow;
 import tech.skullprogrammer.bguard.api.dto.PaginationResponse;
 import tech.skullprogrammer.bguard.api.dto.SupplyPointResponse;
 import tech.skullprogrammer.bguard.domain.entity.Invoice;
@@ -17,6 +18,7 @@ public interface InvoiceMapper {
 
     InvoiceDTO toDTO (Invoice invoice);
     List<InvoiceDTO> toDTO (List<Invoice> invoices);
+    InvoiceDTO toDTO (JobCsvRow jobCsvRow);
     @Mapping(target = "totalElements", source = "totalElements")
     @Mapping(target = "numberOfElements", source = "numberOfElements")
     @Mapping(target = "page", source = "number")

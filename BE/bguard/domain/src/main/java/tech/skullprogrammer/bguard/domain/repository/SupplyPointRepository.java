@@ -11,4 +11,6 @@ public interface SupplyPointRepository extends JpaRepository<SupplyPoint, Long> 
     boolean existsByTypeAndCode(ESupplyPointType type, String code);
 
     SupplyPoint findByIdAndCustomerId(Long id, Long customerId);
+    
+    SupplyPoint findByCodeAndCustomerExternalCode(String code, String customerExternalCode);
 }

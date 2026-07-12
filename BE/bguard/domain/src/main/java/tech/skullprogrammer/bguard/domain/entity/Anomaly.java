@@ -1,8 +1,7 @@
 package tech.skullprogrammer.bguard.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import tech.skullprogrammer.bguard.domain.enumeration.EAnomalySeverity;
 import tech.skullprogrammer.bguard.domain.enumeration.EAnomalyStatus;
 import tech.skullprogrammer.bguard.domain.enumeration.EAnomalyType;
@@ -11,6 +10,9 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Anomaly {
     //id, invoiceId, supplyPointId, importJobId, type, severity, status, description, technicalDetails, createdAt, resolvedAt, resolvedBy
