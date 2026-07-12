@@ -1,6 +1,8 @@
 package tech.skullprogrammer.bguard.api.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,6 +46,14 @@ public class JobService {
         this.invoiceMapper = invoiceMapper;
         this.importJobRepository = importJobRepository;
         this.importErrorRepository = importErrorRepository;
+    }
+
+    public Page<ImportJob> getJobs(Pageable pagination) {
+        return importJobRepository.findAll(pagination);
+    }
+
+    public ImportJob getJobById(Long id) {
+        return importJobRepository.findById(id).orElse(null);
     }
 
     @Transactional

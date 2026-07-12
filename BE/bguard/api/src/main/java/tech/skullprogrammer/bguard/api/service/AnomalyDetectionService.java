@@ -1,7 +1,6 @@
 package tech.skullprogrammer.bguard.api.service;
 
 import org.springframework.stereotype.Service;
-import tech.skullprogrammer.bguard.api.dto.InvoiceDTO;
 import tech.skullprogrammer.bguard.domain.entity.Anomaly;
 import tech.skullprogrammer.bguard.domain.entity.ImportJob;
 import tech.skullprogrammer.bguard.domain.entity.Invoice;
@@ -37,6 +36,9 @@ public class AnomalyDetectionService {
         }
         if (EInvoiceStatus.UNPAID.equals(invoice.getStatus()) && invoice.getDueDate().isBefore(LocalDate.now())) {
             anomalies.add(createAnomaly("Unpaid after due date", EAnomalyType.UNPAID_OVER_THRESHOLD, EAnomalySeverity.MEDIUM, invoice, importJob));
+        }
+        if (invoice.getAmount() != null && invoice.getAmount() < 0) {
+            anomalies.add(createAnomaly("Negative amount", EAnomalyType.NEGATIVE_AMOUNT, EAnomalySeverity.HIGH, invoice, importJob));
         }
         return anomalies;
     }

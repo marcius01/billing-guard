@@ -1,8 +1,10 @@
 package tech.skullprogrammer.bguard.api.dto;
 
+import tech.skullprogrammer.bguard.domain.entity.ImportError;
 import tech.skullprogrammer.bguard.domain.enumeration.EImportJobStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ImportJobDTO {
 
@@ -15,5 +17,6 @@ public class ImportJobDTO {
     private LocalDateTime startedAt;
     private LocalDateTime completedAt;
     private String errorMessage;
+    private List<ImportErrorDTO> errors;
 
 }

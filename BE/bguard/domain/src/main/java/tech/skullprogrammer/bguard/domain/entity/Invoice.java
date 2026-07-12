@@ -1,12 +1,14 @@
 package tech.skullprogrammer.bguard.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import tech.skullprogrammer.bguard.domain.enumeration.EInvoiceStatus;
 
 import java.time.LocalDate;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
