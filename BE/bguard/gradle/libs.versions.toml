@@ -5,6 +5,7 @@ spring-management = "1.1.7"
 postgres-version = "42.7.11"
 mapstruct-version = "1.6.3"
 open-csv = "5.12.0"
+open-api = "3.0.3"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
@@ -19,6 +20,7 @@ postgres-driver = {module="org.postgresql:postgresql", version.ref="postgres-ver
 mapstruct = {module="org.mapstruct:mapstruct", version.ref="mapstruct-version"}
 mapstruct-processor = {module="org.mapstruct:mapstruct-processor", version.ref="mapstruct-version"}
 open-csv = {module="com.opencsv:opencsv", version.ref="open-csv"}
+open-api = {module="org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref="open-api"}
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }

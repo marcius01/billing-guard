@@ -17,6 +17,7 @@ import tech.skullprogrammer.bguard.domain.entity.ImportJob;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/import-jobs")
 public class JobsController {
 
     private JobService jobService;
@@ -27,21 +28,21 @@ public class JobsController {
         this.importJobMapper = importJobMapper;
     }
 
-    @PostMapping(value = "/import-jobs/upload",
+    @PostMapping(value = "/upload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ImportJobDTO uploadJobs(@RequestPart("file") MultipartFile file) {
         ImportJob importJob = this.jobService.uploadJobs(file);
         return importJobMapper.toDTO(importJob);
     }
 
-    @GetMapping(value = "/import-jobs")
+    @GetMapping
     public PaginationResponse<ImportJobDTO> getAllImportJobs(@Valid @ModelAttribute PaginationForRequest pagination) {
         Pageable pageable = PageRequestFactory.create(pagination.getPage(), pagination.getSize(), pagination.getSort());
         Page<ImportJob> result = this.jobService.getJobs(pageable);
         return importJobMapper.toResponseDto(result);
     }
 
-    @GetMapping(value = "/import-jobs/{id}")
+    @GetMapping(value = "/{id}")
     public ImportJobDTO getImportJobById(@PathVariable Long id) {
         ImportJob job = this.jobService.getJobById(id);
         return importJobMapper.toDTO(job);

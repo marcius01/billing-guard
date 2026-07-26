@@ -4,11 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.skullprogrammer.bguard.api.dto.FilterForRequest;
 import tech.skullprogrammer.bguard.api.dto.InvoiceDTO;
@@ -22,7 +18,8 @@ import tech.skullprogrammer.bguard.domain.enumeration.EInvoiceStatus;
 
 import java.net.URI;
 
-@Controller
+@RestController
+@RequestMapping("/api/invoices")
 public class InvoiceController {
 
     private InvoiceService invoiceService;
@@ -33,13 +30,13 @@ public class InvoiceController {
         this.invoiceMapper = invoiceMapper;
     }
 
-    @GetMapping(value = "/invoice/{id}")
+    @GetMapping(value = "/{id}")
     public InvoiceDTO getInvoiceById(@PathVariable Long id) {
         Invoice invoice = invoiceService.getInvoiceById(id);
         return invoiceMapper.toDTO(invoice);
     }
 
-    @GetMapping(value = "/invoice")
+    @GetMapping
     public PaginationResponse<InvoiceDTO> getAllInvoices(
             @ModelAttribute FilterForRequest<EInvoiceStatus> filters,
             @Valid @ModelAttribute PaginationForRequest pagination
@@ -49,10 +46,10 @@ public class InvoiceController {
         return invoiceMapper.toResponseDto(allInvoices);
     }
 
-    @PostMapping(value = "/invoice")
-    public ResponseEntity<Void> saveInvoice(@Valid InvoiceDTO invoiceDTO){
+    @PostMapping
+    public ResponseEntity<Void> saveInvoice(@RequestBody @Valid InvoiceDTO invoiceDTO){
         Invoice invoice = invoiceService.saveInvoice(invoiceDTO);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/invoice/{id}").buildAndExpand(invoice.getId()).toUri();
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(invoice.getId()).toUri();
         return ResponseEntity.created(location)
                 .build();
     }

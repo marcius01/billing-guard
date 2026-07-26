@@ -12,6 +12,7 @@ import tech.skullprogrammer.bguard.api.service.AnomalyService;
 import tech.skullprogrammer.bguard.domain.enumeration.EAnomalyStatus;
 
 @RestController
+@RequestMapping("/api/anomalies")
 public class AnomalyController {
 
     private final AnomalyService anomalyService;
@@ -22,7 +23,7 @@ public class AnomalyController {
         this.anomalyService = anomalyService;
     }
 
-    @GetMapping(value = "/anomalies")
+    @GetMapping
     PaginationResponse<AnomalyResponse> getAnomalies (
             @ModelAttribute FilterForRequest<EAnomalyStatus> filterForRequest,
             @RequestParam(defaultValue = "0") int page,
@@ -33,22 +34,22 @@ public class AnomalyController {
         return mapper.toDTO(anomalyService.getAnomalies(filterForRequest, pageable));
     }
 
-    @GetMapping(value = "/anomalies/{id}")
+    @GetMapping(value = "/{id}")
     AnomalyResponse getAnomalyById(@PathVariable Long id) {
         return mapper.toDTO(anomalyService.getAnomalyById(id));
     }
 
-    @PostMapping(value = "/anomalies/{id}/resolve")
+    @PostMapping(value = "/{id}/resolve")
     AnomalyResponse resolveAnomaly(@PathVariable Long id) {
         return mapper.toDTO(anomalyService.resolveAnomaly(id));
     }
 
-    @PostMapping(value = "/anomalies/{id}/ignore")
+    @PostMapping(value = "/{id}/ignore")
     AnomalyResponse ignoreAnomaly(@PathVariable Long id) {
         return mapper.toDTO(anomalyService.ignoreAnomaly(id));
     }
 
-    @GetMapping(value = "/anomalies/{id}/explanation")
+    @GetMapping(value = "/{id}/explain")
     ExplanationResponse explanation(@PathVariable Long id){
         return anomalyService.getExplanation(id);
     }

@@ -12,7 +12,7 @@ description = "app"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -23,6 +23,7 @@ repositories {
 dependencies {
     implementation(libs.spring.boot.web)
     implementation(libs.spring.boot.jpa)
+    implementation(libs.open.api)
     developmentOnly(libs.spring.boot.devtools)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)

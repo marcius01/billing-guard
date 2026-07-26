@@ -19,6 +19,7 @@ import tech.skullprogrammer.bguard.domain.entity.SupplyPoint;
 import java.net.URI;
 
 @RestController
+@RequestMapping("/api/supply-points")
 public class SupplyPointController {
 
     private SupplyPointService supplyPointService;
@@ -29,7 +30,7 @@ public class SupplyPointController {
         this.supplyPointMapper = supplyPointMapper;
     }
 
-    @GetMapping(value = "/supply-points")
+    @GetMapping
     public PaginationResponse<SupplyPointResponse> getAllSupplyPoints(
             @RequestParam(value = "page", defaultValue = "0") @PositiveOrZero() int page,
             @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size,
@@ -39,12 +40,12 @@ public class SupplyPointController {
         return supplyPointMapper.toResponseDto(supplyPointService.getAllSupplyPoint(pageable));
     }
 
-    @GetMapping(value = "/supply-points/{id}")
+    @GetMapping(value = "/{id}")
     public SupplyPointResponse getSupplyPointById(@PathVariable("id") Long id) {
         return supplyPointMapper.toResponseDto(supplyPointService.getSupplyPointById(id));
     }
 
-    @PostMapping(value = "/supply-points")
+    @PostMapping
     public ResponseEntity<Void> saveSupplyPoint(@RequestBody @Valid SupplyPointRequest supplyPointRequest) {
         SupplyPoint supplyPoint = supplyPointService.saveSupplyPoint(supplyPointRequest);
         URI locationUri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(supplyPoint.getId()).toUri();

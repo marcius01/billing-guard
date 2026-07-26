@@ -43,7 +43,7 @@ public class SupplyPointControllerTest {
         supplyPoint.setId(111L);
         given(supplyPointService.getSupplyPointById(any()))
                 .willReturn(supplyPoint);
-        SupplyPointResponse responseBody = testClient.get().uri("/supply-points/111")
+        SupplyPointResponse responseBody = testClient.get().uri("/api/supply-points/111")
                 .exchange().expectStatus()
                 .isOk().returnResult(SupplyPointResponse.class)
                 .getResponseBody();
@@ -60,7 +60,7 @@ public class SupplyPointControllerTest {
                 .customerId(111L)
                 .build();
         given(supplyPointService.saveSupplyPoint(any(SupplyPointRequest.class))).willThrow(new SkullException(SkullException.ErrorType.CUSTOMER_NOT_FOUND));
-        ErrorResponse responseBody = testClient.post().uri("/supply-points").body(request).exchange().expectStatus()
+        ErrorResponse responseBody = testClient.post().uri("/api/supply-points").body(request).exchange().expectStatus()
                 .isEqualTo(SkullException.ErrorType.CUSTOMER_NOT_FOUND.getHttpStatus())
                 .expectBody(ErrorResponse.class)
                 .returnResult().getResponseBody();

@@ -53,7 +53,7 @@ public class CustomerControllerTest {
         customer.setId(111L);
         given(customerService.getCustomerById(any()))
                 .willReturn(customer);
-        CustomerResponse responseBody = testClient.get().uri("/customer/111")
+        CustomerResponse responseBody = testClient.get().uri("/api/customers/111")
                 .exchange().expectStatus()
                 .isOk().returnResult(CustomerResponse.class)
                 .getResponseBody();
@@ -67,7 +67,7 @@ public class CustomerControllerTest {
         customer.setId(111L);
         given(customerService.getCustomerById(any()))
                 .willReturn(customer);
-        ErrorResponse responseBody = testClient.get().uri("/customer/1ko")
+        ErrorResponse responseBody = testClient.get().uri("/api/customers/1ko")
                 .exchange().expectStatus()
                 .isEqualTo(SkullException.ErrorType.INVALID_DATA.getHttpStatus())
                 .expectBody(ErrorResponse.class)
@@ -86,7 +86,7 @@ public class CustomerControllerTest {
         );
         given(customerService.allCustomers(any()))
                 .willReturn(customerPage);
-        PaginationResponse responseBody = testClient.get().uri("/customer").exchange().expectStatus()
+        PaginationResponse responseBody = testClient.get().uri("/api/customers").exchange().expectStatus()
                 .isOk().returnResult(PaginationResponse.class)
                 .getResponseBody();
     }
@@ -102,9 +102,9 @@ public class CustomerControllerTest {
         customer.setName("Mario");
         customer.setId(111L);
         given(customerService.saveCustomer(any(CustomerRequest.class))).willReturn(customer);
-        testClient.post().uri("/customer").body(customerRequest).exchange().expectStatus()
+        testClient.post().uri("/api/customers").body(customerRequest).exchange().expectStatus()
                 .isCreated()
-                .expectHeader().location("http://localhost/customer/111");
+                .expectHeader().location("http://localhost/api/customers/111");
     }
 
     @Test
@@ -114,7 +114,7 @@ public class CustomerControllerTest {
         customer.setName("Mario");
         customer.setId(111L);
         given(customerService.saveCustomer(any(CustomerRequest.class))).willReturn(customer);
-        ErrorResponse responseBody = testClient.post().uri("/customer").body(request).exchange().expectStatus()
+        ErrorResponse responseBody = testClient.post().uri("/api/customers").body(request).exchange().expectStatus()
                 .isEqualTo(SkullException.ErrorType.INVALID_DATA.getHttpStatus())
                 .expectBody(ErrorResponse.class)
                 .returnResult().getResponseBody();

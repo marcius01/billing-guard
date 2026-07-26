@@ -22,6 +22,7 @@ import java.net.URI;
 
 @Slf4j
 @RestController
+@RequestMapping("/api/customers")
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -32,7 +33,7 @@ public class CustomerController {
         this.customerMapper = customerMapper;
     }
 
-    @GetMapping(value = "/customer")
+    @GetMapping
     public PaginationResponse<CustomerResponse> allCustomers(
             @RequestParam(value = "page", defaultValue = "0") @PositiveOrZero() int page,
             @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size,
@@ -43,12 +44,12 @@ public class CustomerController {
         return customerMapper.toRequestDto(rawResult);
     }
 
-    @GetMapping(value = "/customer/{id}")
+    @GetMapping(value = "/{id}")
     public CustomerResponse getCustomerById(@PathVariable("id") Long id) {
         return customerMapper.toResponseDto(customerService.getCustomerById(id));
     }
 
-    @PostMapping(value = "/customer")
+    @PostMapping
     public ResponseEntity<Void> saveCustomer(@RequestBody @Valid CustomerRequest customerRequest) {
         Customer customer = customerService.saveCustomer(customerRequest);
         URI locationUri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(customer.getId()).toUri();
