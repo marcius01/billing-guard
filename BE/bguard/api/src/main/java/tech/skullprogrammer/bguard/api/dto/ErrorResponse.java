@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.skullprogrammer.bguard.domain.SkullException;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +19,16 @@ public class ErrorResponse {
 
     @Getter
     private String message;
+    @Getter
     private SkullException.ErrorType error;
+    @Getter
+    private LocalDateTime timestamp;
+    @Getter
+    private int status;
+    @Getter
+    private String path;
+    @Getter
+    private String correlationId;
     private final String prefixCode = "BGUARD";
     @Builder.Default
     @Getter

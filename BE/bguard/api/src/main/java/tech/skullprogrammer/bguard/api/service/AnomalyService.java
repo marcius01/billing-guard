@@ -4,13 +4,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.skullprogrammer.bguard.api.dto.ExplanationResponse;
 import tech.skullprogrammer.bguard.api.dto.FilterForRequest;
 import tech.skullprogrammer.bguard.domain.SkullException;
 import tech.skullprogrammer.bguard.domain.entity.Anomaly;
 import tech.skullprogrammer.bguard.domain.enumeration.EAnomalyStatus;
 import tech.skullprogrammer.bguard.domain.repository.AnomalyRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -59,4 +59,11 @@ public class AnomalyService {
         return anomalyRepository.save(anomaly);
     }
 
+    public ExplanationResponse getExplanation(Long id) {
+        Anomaly anomaly = anomalyRepository.findById(id).orElse(null);
+        if (anomaly == null) throw new SkullException(SkullException.ErrorType.ENTITY_NOT_FOUND);
+        String explanationString = "Anomaly " +
+        anomaly.getType().name() + " (severity " + anomaly.getSeverity().name() + "): " + anomaly.getDescription();
+        return new ExplanationResponse(explanationString);
+    }
 }

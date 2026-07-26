@@ -3,6 +3,7 @@ package tech.skullprogrammer.bguard.api.controller;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import tech.skullprogrammer.bguard.api.dto.AnomalyResponse;
+import tech.skullprogrammer.bguard.api.dto.ExplanationResponse;
 import tech.skullprogrammer.bguard.api.dto.FilterForRequest;
 import tech.skullprogrammer.bguard.api.dto.PaginationResponse;
 import tech.skullprogrammer.bguard.api.mapper.AnomalyMapper;
@@ -45,5 +46,10 @@ public class AnomalyController {
     @PostMapping(value = "/anomalies/{id}/ignore")
     AnomalyResponse ignoreAnomaly(@PathVariable Long id) {
         return mapper.toDTO(anomalyService.ignoreAnomaly(id));
+    }
+
+    @GetMapping(value = "/anomalies/{id}/explanation")
+    ExplanationResponse explanation(@PathVariable Long id){
+        return anomalyService.getExplanation(id);
     }
 }
