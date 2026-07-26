@@ -18,6 +18,7 @@ import tech.skullprogrammer.bguard.api.mapper.InvoiceMapper;
 import tech.skullprogrammer.bguard.api.operator.PageRequestFactory;
 import tech.skullprogrammer.bguard.api.service.InvoiceService;
 import tech.skullprogrammer.bguard.domain.entity.Invoice;
+import tech.skullprogrammer.bguard.domain.enumeration.EInvoiceStatus;
 
 import java.net.URI;
 
@@ -40,7 +41,7 @@ public class InvoiceController {
 
     @GetMapping(value = "/invoice")
     public PaginationResponse<InvoiceDTO> getAllInvoices(
-            @ModelAttribute FilterForRequest filters,
+            @ModelAttribute FilterForRequest<EInvoiceStatus> filters,
             @Valid @ModelAttribute PaginationForRequest pagination
             ){
         Pageable pageable = PageRequestFactory.create(pagination.getPage(), pagination.getSize(), pagination.getSort());

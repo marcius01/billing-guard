@@ -16,6 +16,7 @@ import tech.skullprogrammer.bguard.domain.SkullException;
 import tech.skullprogrammer.bguard.domain.entity.Customer;
 import tech.skullprogrammer.bguard.domain.entity.Invoice;
 import tech.skullprogrammer.bguard.domain.entity.SupplyPoint;
+import tech.skullprogrammer.bguard.domain.enumeration.EInvoiceStatus;
 import tech.skullprogrammer.bguard.domain.repository.InvoiceRepository;
 
 import java.util.Map;
@@ -41,14 +42,8 @@ public class InvoiceService {
         return invoiceRepository.findById(id).orElse(null);
     }
 
-    public Page<Invoice> getAllInvoices(FilterForRequest filters, Pageable pagination) {
-        Specification<Invoice> filtersSpec = Specification
-                .where(FilterSpecificationFactory.hasCustomerId(filters.getCustomerId()))
-                .and(FilterSpecificationFactory.hasSupplyPointId(filters.getSupplyPointId()))
-                .and(FilterSpecificationFactory.hasStatus(filters.getStatus()))
-                .and(FilterSpecificationFactory.hasIssueDateFrom(filters.getIssueDateFrom()))
-                .and(FilterSpecificationFactory.hasIssueDateTo(filters.getIssueDateTo()));
-        return invoiceRepository.findAll(filtersSpec, pagination);
+    public Page<Invoice> getAllInvoices(FilterForRequest<EInvoiceStatus> filters, Pageable pagination) {
+        return invoiceRepository.findAll(filters.toSpecification(), pagination);
     }
 
     @Transactional
