@@ -1,3 +1,11 @@
+DELETE FROM anomaly;
+DELETE FROM import_error;
+DELETE FROM import_job;
+DELETE FROM invoice;
+DELETE FROM supply_point;
+DELETE FROM customer;
+DELETE FROM users;
+
 -- Sequence reset
 SELECT setval('customer_seq', 100);
 SELECT setval('supply_point_seq', 100);
@@ -9,9 +17,11 @@ SELECT setval('users_seq', 100);
 
 -- Users
 INSERT INTO "users" (id, username, password, role, status, token, email, name, surname) VALUES
-(1, 'admin', 'admin123', 'ADMIN', 'ACTIVE', null, 'admin@bguard.tech', 'Admin', 'Bguard'),
-(2, 'analyst1', 'pass123', 'ANALYST', 'ACTIVE', null, 'analyst1@bguard.tech', 'Mario', 'Rossi'),
-(3, 'viewer1', 'pass123', 'VIEWER', 'INACTIVE', null, 'viewer1@bguard.tech', 'Luca', 'Bianchi');
+-- password: admin123
+(1, 'admin', '$2a$10$I.CNmsIIJ6RMxG2Mqt1yc.3fm/zuR.bn2ne9EWz87SvzaW1dpBOO6', 'ADMIN', 'ACTIVE', null, 'admin@bguard.tech', 'Admin', 'Bguard'),
+-- password: pass123
+(2, 'analyst1', '$2a$10$ggMgx4vL/FP4tgFOdcWuz.t4LqxDnpAo/ne6azKCQfnMg6p4cd4R2', 'ANALYST', 'ACTIVE', null, 'analyst1@bguard.tech', 'Mario', 'Rossi'),
+(3, 'viewer1', '$2a$10$ggMgx4vL/FP4tgFOdcWuz.t4LqxDnpAo/ne6azKCQfnMg6p4cd4R2', 'VIEWER', 'INACTIVE', null, 'viewer1@bguard.tech', 'Luca', 'Bianchi');
 
 -- Customers
 INSERT INTO customer (id, external_code, name, tax_code, email, created_at, updated_at) VALUES

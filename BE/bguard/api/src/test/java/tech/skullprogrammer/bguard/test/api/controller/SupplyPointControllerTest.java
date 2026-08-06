@@ -1,11 +1,16 @@
-package tech.skullprogrammer.bguard.test.api;
+package tech.skullprogrammer.bguard.test.api.controller;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.client.RestTestClient;
@@ -14,16 +19,18 @@ import tech.skullprogrammer.bguard.api.dto.ErrorResponse;
 import tech.skullprogrammer.bguard.api.dto.SupplyPointRequest;
 import tech.skullprogrammer.bguard.api.dto.SupplyPointResponse;
 import tech.skullprogrammer.bguard.api.mapper.SupplyPointMapperImpl;
+import tech.skullprogrammer.bguard.api.security.SecurityConfiguration;
 import tech.skullprogrammer.bguard.api.service.SupplyPointService;
 import tech.skullprogrammer.bguard.domain.SkullException;
 import tech.skullprogrammer.bguard.domain.entity.SupplyPoint;
+import tech.skullprogrammer.bguard.domain.enumeration.ERole;
 import tech.skullprogrammer.bguard.domain.enumeration.ESupplyPointType;
 import tech.skullprogrammer.bguard.test.SpringTestConfigurationMVC;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-@Import(SupplyPointMapperImpl.class)
+@Import({SupplyPointMapperImpl.class, SecurityConfiguration.class})
 @WebMvcTest(SupplyPointController.class)
 @ContextConfiguration(classes = SpringTestConfigurationMVC.class)
 @AutoConfigureRestTestClient
@@ -31,9 +38,20 @@ public class SupplyPointControllerTest {
 
     @Autowired
     private RestTestClient testClient;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @MockitoBean
     private SupplyPointService supplyPointService;
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+
+    @BeforeEach
+    public void setUp() {
+        UserDetails admin = User.builder().username("admdin").password(passwordEncoder.encode("admin123")).roles(ERole.ADMIN.name()).build();
+        given(userDetailsService.loadUserByUsername("admdin"))
+                .willReturn(admin);
+    }
 
     @Test
     public void testFindSupplyPointByIdOK() {
@@ -44,6 +62,7 @@ public class SupplyPointControllerTest {
         given(supplyPointService.getSupplyPointById(any()))
                 .willReturn(supplyPoint);
         SupplyPointResponse responseBody = testClient.get().uri("/api/supply-points/111")
+                .headers(headers -> headers.setBasicAuth("admdin", "admin123"))
                 .exchange().expectStatus()
                 .isOk().returnResult(SupplyPointResponse.class)
                 .getResponseBody();
@@ -60,7 +79,9 @@ public class SupplyPointControllerTest {
                 .customerId(111L)
                 .build();
         given(supplyPointService.saveSupplyPoint(any(SupplyPointRequest.class))).willThrow(new SkullException(SkullException.ErrorType.CUSTOMER_NOT_FOUND));
-        ErrorResponse responseBody = testClient.post().uri("/api/supply-points").body(request).exchange().expectStatus()
+        ErrorResponse responseBody = testClient.post().uri("/api/supply-points").body(request)
+                .headers(headers -> headers.setBasicAuth("admdin", "admin123"))
+                .exchange().expectStatus()
                 .isEqualTo(SkullException.ErrorType.CUSTOMER_NOT_FOUND.getHttpStatus())
                 .expectBody(ErrorResponse.class)
                 .returnResult().getResponseBody();

@@ -22,6 +22,7 @@ dependencies {
     annotationProcessor(libs.mapstruct.processor)
     implementation(libs.bean.validation)
     implementation(libs.open.csv)
+    implementation(libs.spring.security)
     testImplementation(platform("org.junit:junit-bom:6.0.0"))
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation(libs.spring.boot.webmvc.test)
