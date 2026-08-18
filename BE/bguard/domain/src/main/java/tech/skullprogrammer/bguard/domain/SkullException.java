@@ -18,6 +18,8 @@ public class SkullException extends RuntimeException{
         UNCHANGED_DATA(HttpStatus.UNPROCESSABLE_CONTENT),
         INVALID_DATA (HttpStatus.UNPROCESSABLE_CONTENT),
         CSV_ERROR (HttpStatus.BAD_REQUEST),
+        JWT_ERROR (HttpStatus.UNAUTHORIZED),
+        UNAUTHORIZED (HttpStatus.UNAUTHORIZED),
         UNEXPECTED_ERROR (HttpStatus.INTERNAL_SERVER_ERROR);
 
         private final HttpStatus status;

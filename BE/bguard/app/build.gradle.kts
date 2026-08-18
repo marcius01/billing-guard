@@ -1,3 +1,7 @@
+import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.kotlin.dsl.getByType
+import org.springframework.boot.gradle.tasks.run.BootRun
+
 plugins {
     java
 //    id("org.springframework.boot")
@@ -42,4 +46,37 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+evaluationDependsOn(":api")
+evaluationDependsOn(":domain")
+
+val apiSourceSets = project(":api")
+    .extensions
+    .getByType<SourceSetContainer>()
+
+val domainSourceSets = project(":domain")
+    .extensions
+    .getByType<SourceSetContainer>()
+
+tasks.named<BootRun>("bootRun") {
+    dependsOn(
+        ":api:classes",
+        ":domain:classes"
+    )
+
+    val runtimeClasspathWithoutInternalJars =
+        sourceSets.main.get().runtimeClasspath.filter { file ->
+            val path = file.invariantSeparatorsPath
+
+            !path.endsWith("/api/build/libs/api.jar") &&
+                    !path.contains("/domain/build/libs/domain-")
+        }
+
+    classpath = files(
+        sourceSets.main.get().output,
+        apiSourceSets.main.get().output,
+        domainSourceSets.main.get().output,
+        runtimeClasspathWithoutInternalJars
+    )
 }

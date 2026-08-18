@@ -12,8 +12,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.client.RestTestClient;
@@ -26,6 +26,7 @@ import tech.skullprogrammer.bguard.api.mapper.CustomerMapper;
 import tech.skullprogrammer.bguard.api.mapper.CustomerMapperImpl;
 import tech.skullprogrammer.bguard.api.security.SecurityConfiguration;
 import tech.skullprogrammer.bguard.api.service.CustomerService;
+import tech.skullprogrammer.bguard.api.service.JWTService;
 import tech.skullprogrammer.bguard.domain.SkullException;
 import tech.skullprogrammer.bguard.domain.entity.Customer;
 import tech.skullprogrammer.bguard.domain.enumeration.ERole;
@@ -36,7 +37,8 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-@Import({CustomerMapperImpl.class, SecurityConfiguration.class})
+@Import({CustomerMapperImpl.class, SecurityConfiguration.class, JWTService.class})
+@ActiveProfiles("test")
 @WebMvcTest(CustomerController.class)
 @ContextConfiguration(classes = SpringTestConfigurationMVC.class)
 @AutoConfigureRestTestClient
@@ -48,17 +50,22 @@ public class CustomerControllerTest {
     private CustomerMapper customerMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JWTService jwtService;
 
     @MockitoBean
     private CustomerService customerService;
-    @MockitoBean
-    private UserDetailsService userDetailsService;
+
+
+    private String tokenAdmin;
+    private String tokenViewer;
 
     @BeforeEach
     public void setUp() {
-        UserDetails admin = User.builder().username("admdin").password(passwordEncoder.encode("admin123")).roles(ERole.ADMIN.name()).build();
-        given(userDetailsService.loadUserByUsername("admdin"))
-                .willReturn(admin);
+        UserDetails admin = User.builder().username("admin").password(passwordEncoder.encode("admin123")).roles(ERole.ADMIN.name()).build();
+        UserDetails viewer = User.builder().username("viewer").password(passwordEncoder.encode("viewer123")).roles(ERole.VIEWER.name()).build();
+        tokenAdmin = jwtService.generateToken(admin);
+        tokenViewer = jwtService.generateToken(viewer);
     }
 
     @Test
@@ -69,7 +76,7 @@ public class CustomerControllerTest {
         given(customerService.getCustomerById(any()))
                 .willReturn(customer);
         CustomerResponse responseBody = testClient.get().uri("/api/customers/111")
-                .headers(headers -> headers.setBasicAuth("admdin", "admin123"))
+                .headers(headers -> headers.setBearerAuth(tokenAdmin))
                 .exchange().expectStatus()
                 .isOk().returnResult(CustomerResponse.class)
                 .getResponseBody();
@@ -84,7 +91,7 @@ public class CustomerControllerTest {
         given(customerService.getCustomerById(any()))
                 .willReturn(customer);
         ErrorResponse responseBody = testClient.get().uri("/api/customers/1ko")
-                .headers(headers -> headers.setBasicAuth("admdin", "admin123"))
+                .headers(headers -> headers.setBearerAuth(tokenAdmin))
                 .exchange().expectStatus()
                 .isEqualTo(SkullException.ErrorType.INVALID_DATA.getHttpStatus())
                 .expectBody(ErrorResponse.class)
@@ -104,7 +111,7 @@ public class CustomerControllerTest {
         given(customerService.allCustomers(any()))
                 .willReturn(customerPage);
         PaginationResponse responseBody = testClient.get().uri("/api/customers")
-                .headers(headers -> headers.setBasicAuth("admdin", "admin123"))
+                .headers(headers -> headers.setBearerAuth(tokenAdmin))
                 .exchange().expectStatus()
                 .isOk().returnResult(PaginationResponse.class)
                 .getResponseBody();
@@ -122,7 +129,7 @@ public class CustomerControllerTest {
         customer.setId(111L);
         given(customerService.saveCustomer(any(CustomerRequest.class))).willReturn(customer);
         testClient.post().uri("/api/customers").body(customerRequest)
-                .headers(headers -> headers.setBasicAuth("admdin", "admin123"))
+                .headers(headers -> headers.setBearerAuth(tokenAdmin))
                 .exchange().expectStatus()
                 .isCreated()
                 .expectHeader().location("http://localhost/api/customers/111");
@@ -136,11 +143,27 @@ public class CustomerControllerTest {
         customer.setId(111L);
         given(customerService.saveCustomer(any(CustomerRequest.class))).willReturn(customer);
         ErrorResponse responseBody = testClient.post().uri("/api/customers").body(request)
-                .headers(headers -> headers.setBasicAuth("admdin", "admin123"))
+                .headers(headers -> headers.setBearerAuth(tokenAdmin))
                 .exchange().expectStatus()
                 .isEqualTo(SkullException.ErrorType.INVALID_DATA.getHttpStatus())
                 .expectBody(ErrorResponse.class)
                 .returnResult().getResponseBody();
     }
 
+    @Test
+    public void testSaveCustomerWrongRole() {
+        CustomerRequest customerRequest = new CustomerRequest();
+        customerRequest.setName("Mario");
+        customerRequest.setEmail("mario@fake.com");
+        customerRequest.setExternalCode("111");
+        customerRequest.setTaxCode("111");
+        Customer customer = new Customer();
+        customer.setName("Mario");
+        customer.setId(111L);
+        given(customerService.saveCustomer(any(CustomerRequest.class))).willReturn(customer);
+        testClient.post().uri("/api/customers").body(customerRequest)
+                .headers(headers -> headers.setBearerAuth(tokenViewer))
+                .exchange().expectStatus()
+                .isForbidden();
+    }
 }

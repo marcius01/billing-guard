@@ -9,8 +9,8 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.client.RestTestClient;
@@ -20,6 +20,7 @@ import tech.skullprogrammer.bguard.api.dto.SupplyPointRequest;
 import tech.skullprogrammer.bguard.api.dto.SupplyPointResponse;
 import tech.skullprogrammer.bguard.api.mapper.SupplyPointMapperImpl;
 import tech.skullprogrammer.bguard.api.security.SecurityConfiguration;
+import tech.skullprogrammer.bguard.api.service.JWTService;
 import tech.skullprogrammer.bguard.api.service.SupplyPointService;
 import tech.skullprogrammer.bguard.domain.SkullException;
 import tech.skullprogrammer.bguard.domain.entity.SupplyPoint;
@@ -30,8 +31,9 @@ import tech.skullprogrammer.bguard.test.SpringTestConfigurationMVC;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-@Import({SupplyPointMapperImpl.class, SecurityConfiguration.class})
+@Import({SupplyPointMapperImpl.class, SecurityConfiguration.class, JWTService.class})
 @WebMvcTest(SupplyPointController.class)
+@ActiveProfiles("test")
 @ContextConfiguration(classes = SpringTestConfigurationMVC.class)
 @AutoConfigureRestTestClient
 public class SupplyPointControllerTest {
@@ -40,17 +42,18 @@ public class SupplyPointControllerTest {
     private RestTestClient testClient;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JWTService jwtService;
 
     @MockitoBean
     private SupplyPointService supplyPointService;
-    @MockitoBean
-    private UserDetailsService userDetailsService;
+
+    private String token;
 
     @BeforeEach
     public void setUp() {
-        UserDetails admin = User.builder().username("admdin").password(passwordEncoder.encode("admin123")).roles(ERole.ADMIN.name()).build();
-        given(userDetailsService.loadUserByUsername("admdin"))
-                .willReturn(admin);
+        UserDetails admin = User.builder().username("admin").password(passwordEncoder.encode("admin123")).roles(ERole.ADMIN.name()).build();
+        token = jwtService.generateToken(admin);
     }
 
     @Test
@@ -62,7 +65,7 @@ public class SupplyPointControllerTest {
         given(supplyPointService.getSupplyPointById(any()))
                 .willReturn(supplyPoint);
         SupplyPointResponse responseBody = testClient.get().uri("/api/supply-points/111")
-                .headers(headers -> headers.setBasicAuth("admdin", "admin123"))
+                .headers(headers -> headers.setBearerAuth(token))
                 .exchange().expectStatus()
                 .isOk().returnResult(SupplyPointResponse.class)
                 .getResponseBody();
@@ -78,9 +81,9 @@ public class SupplyPointControllerTest {
                 .type(ESupplyPointType.ELECTRICITY)
                 .customerId(111L)
                 .build();
-        given(supplyPointService.saveSupplyPoint(any(SupplyPointRequest.class))).willThrow(new SkullException(SkullException.ErrorType.CUSTOMER_NOT_FOUND));
+        given(supplyPointService.saveSupplyPoint(any(SupplyPointRequest.class))).willThrow(new SkullException("test error", SkullException.ErrorType.CUSTOMER_NOT_FOUND));
         ErrorResponse responseBody = testClient.post().uri("/api/supply-points").body(request)
-                .headers(headers -> headers.setBasicAuth("admdin", "admin123"))
+                .headers(headers -> headers.setBearerAuth(token))
                 .exchange().expectStatus()
                 .isEqualTo(SkullException.ErrorType.CUSTOMER_NOT_FOUND.getHttpStatus())
                 .expectBody(ErrorResponse.class)
