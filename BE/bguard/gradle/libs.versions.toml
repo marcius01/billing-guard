@@ -6,6 +6,7 @@ postgres-version = "42.7.11"
 mapstruct-version = "1.6.3"
 open-csv = "5.12.0"
 open-api = "3.0.3"
+testcontainer-bom-version = "2.0.5"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
@@ -25,6 +26,10 @@ open-api = {module="org.springdoc:springdoc-openapi-starter-webmvc-ui", version.
 flyway-core = { module = "org.flywaydb:flyway-core" }
 flyway-postgres = { module = "org.flywaydb:flyway-database-postgresql" }
 flyway-spring = { module = "org.springframework.boot:spring-boot-flyway" }
+spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers", version.ref = "spring-boot" }
+spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
+
+testcontainer-bom = {module = "org.testcontainers:testcontainers-bom", version.ref="testcontainer-bom-version"}
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
