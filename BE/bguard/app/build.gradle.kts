@@ -14,12 +14,6 @@ group = "tech.skullprogrammer.bguard"
 version = "0.0.1-SNAPSHOT"
 description = "app"
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
-    }
-}
-
 repositories {
     mavenCentral()
 }

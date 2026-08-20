@@ -1,0 +1,34 @@
+name: billing-guard-app
+
+services:
+  bguard-app:
+    # image: ${APP_IMAGE_NAME}
+    build:
+      context: ../../BE/bguard/.
+      dockerfile: ../../BE/bguard/Dockerfile
+    container_name: ${APP_CONTAINER_NAME}
+    environment:
+      TECH_SKULLPROGRAMMER_DB_URL: bguard-db:5432
+      SPRING_PROFILES_ACTIVE: dev
+    depends_on:
+      bguard-db:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+  bguard-db:
+    image: ${DB_IMAGE_NAME}
+    container_name: ${DB_CONTAINER_NAME}
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      ALLOW_IP_RANGE: 0.0.0.0/0
+    volumes:
+      - ${DATA_DIR:-./data}:/var/lib/postgresql/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    restart: always
