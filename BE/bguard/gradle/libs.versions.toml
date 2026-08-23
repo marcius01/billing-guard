@@ -28,6 +28,7 @@ flyway-postgres = { module = "org.flywaydb:flyway-database-postgresql" }
 flyway-spring = { module = "org.springframework.boot:spring-boot-flyway" }
 spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers", version.ref = "spring-boot" }
 spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
+spring-boot-starter-kafka = { module = "org.springframework.boot:spring-boot-starter-kafka", version.ref = "spring-boot" }
 
 testcontainer-bom = {module = "org.testcontainers:testcontainers-bom", version.ref="testcontainer-bom-version"}
 
