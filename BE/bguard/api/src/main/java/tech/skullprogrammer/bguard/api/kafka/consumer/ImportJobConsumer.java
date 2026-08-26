@@ -1,0 +1,37 @@
+package tech.skullprogrammer.bguard.api.kafka.consumer;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
+import tech.skullprogrammer.bguard.api.kafka.event.ImportJobCreatedEvent;
+import tech.skullprogrammer.bguard.api.kafka.KafkaTopicConfig;
+import tech.skullprogrammer.bguard.api.service.ImportProcessingService;
+import tech.skullprogrammer.bguard.domain.SkullException;
+import tech.skullprogrammer.bguard.domain.entity.ImportJob;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class ImportJobConsumer {
+
+    private final ImportProcessingService importProcessingService;
+
+    @KafkaListener(topics = KafkaTopicConfig.TOPIC_IMPORT_JOB_CREATED, groupId = "first")
+    public void consumeImportEventCreated(ImportJobCreatedEvent event) {
+        try {
+            ImportJob importJob = importProcessingService.importJob(event.importJobId());
+        } catch (SkullException e) {
+            if (e.getErrorType() == SkullException.ErrorType.IMPORT_JOB_ALREADY_PROCESSED) {
+                log.info("Import job {} already processed, skipping duplicate delivery", event.importJobId());
+            } else {
+                log.error("exception on event {} - exception: {}", event, e.toString());
+                throw e;
+            }
+        } catch (Exception e) {
+            log.error("exception on event {} - exception: {}", event, e.toString());
+            throw e;
+        }
+    }
+
+}

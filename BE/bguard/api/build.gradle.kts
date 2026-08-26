@@ -31,6 +31,14 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation(libs.spring.boot.webmvc.test)
     testRuntimeOnly("com.h2database:h2:2.4.240")
+    //testcontainer
+    testImplementation(platform(libs.spring.boot.bom))
+    testImplementation(platform(libs.testcontainer.bom))
+    testImplementation("org.testcontainers:testcontainers")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+    testImplementation("org.testcontainers:testcontainers-kafka")
+    testImplementation(libs.spring.boot.testcontainers)
+    testImplementation("org.awaitility:awaitility:4.3.0")
     // bguard modules
     implementation(project(":domain"))
 }

@@ -15,11 +15,13 @@ public class SkullException extends RuntimeException{
         CUSTOMER_ALREADY_EXISTS (HttpStatus.CONFLICT),
         INVOICE_ALREADY_EXISTS (HttpStatus.CONFLICT),
         ENTITY_ALREADY_EXISTS (HttpStatus.CONFLICT),
+        IMPORT_JOB_ALREADY_PROCESSED (HttpStatus.CONFLICT),
         UNCHANGED_DATA(HttpStatus.UNPROCESSABLE_CONTENT),
         INVALID_DATA (HttpStatus.UNPROCESSABLE_CONTENT),
         CSV_ERROR (HttpStatus.BAD_REQUEST),
         JWT_ERROR (HttpStatus.UNAUTHORIZED),
         UNAUTHORIZED (HttpStatus.UNAUTHORIZED),
+        IMPORT_JOB_ERROR (HttpStatus.INTERNAL_SERVER_ERROR),
         UNEXPECTED_ERROR (HttpStatus.INTERNAL_SERVER_ERROR);
 
         private final HttpStatus status;
