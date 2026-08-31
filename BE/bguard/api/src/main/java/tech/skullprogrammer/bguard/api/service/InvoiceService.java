@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import tech.skullprogrammer.bguard.api.dto.FilterForRequest;
@@ -46,7 +47,7 @@ public class InvoiceService {
         return invoiceRepository.findAll(filters.toSpecification(), pagination);
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Invoice saveInvoice(@Valid InvoiceDTO invoiceDTO) {
         if ((invoiceDTO.getCustomerId() == null || invoiceDTO.getSupplyPointId() == null)
                 && (invoiceDTO.getCustomerCode() == null || invoiceDTO.getSupplyPointCode() == null)) {

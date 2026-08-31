@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,7 @@ import java.time.LocalDate;
 @SpringBootTest(classes = {SpringTestConfiguration.class})
 @ActiveProfiles("test")
 @Sql(scripts = {"classpath:db/insert-test-invoices.sql"})
-@Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class InvoiceServiceTest {
 
     @Autowired

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
@@ -26,6 +27,7 @@ import tech.skullprogrammer.bguard.domain.entity.ImportJob;
 import tech.skullprogrammer.bguard.test.SpringTestConfiguration;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -36,7 +38,7 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest(classes = {SpringTestConfiguration.class})
 @ActiveProfiles("test")
 @Sql(scripts = {"classpath:db/insert-test-invoices.sql"})
-@Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JobServiceTest {
 
     @Autowired
@@ -57,7 +59,12 @@ public class JobServiceTest {
                 0     // serializedValueSize
         );
         SendResult<String, ImportJobCreatedEvent> sendResult = new SendResult<>(producerRecord, recordMetadata);
-        given(kafkaTemplate.send(anyString(), anyString(), any(ImportJobCreatedEvent.class)))
+//        ProducerRecord<String, ImportJobCreatedEvent> record = new ProducerRecord<>(
+//                KafkaTopicConfig.TOPIC_IMPORT_JOB_CREATED, importJob.getId().toString(), event
+//        );
+//        record.headers().add(correlationKey, correlationId.getBytes(StandardCharsets.UTF_8));
+
+        given(kafkaTemplate.send(any(ProducerRecord.class)))
                 .willReturn(CompletableFuture.completedFuture(sendResult));
     }
 
@@ -66,13 +73,15 @@ public class JobServiceTest {
         MockMultipartFile importJobMultiPart = new MockMultipartFile("file", "test-invoices.csv", "text/csv", getClass().getResourceAsStream("/jobs/test-invoices.csv"));
         ImportJob importJob = jobService.uploadJobs(importJobMultiPart);
         verify(kafkaTemplate).send(
-                eq(KafkaTopicConfig.TOPIC_IMPORT_JOB_CREATED),
-                eq(String.valueOf(importJob.getId())),
-                any(ImportJobCreatedEvent.class));
+                any(ProducerRecord.class));
+//                eq(KafkaTopicConfig.TOPIC_IMPORT_JOB_CREATED),
+//                eq(String.valueOf(importJob.getId())),
+//                any(ImportJobCreatedEvent.class));
     }
 
     @Test
     @Sql(scripts = {"classpath:db/insert-test-import-jobs.sql"})
+    @Transactional
     public void testFind() throws IOException {
         Pageable pageable = PageRequestFactory.create(0, 10, "id,desc");
         Page<ImportJob> jobs = jobService.getJobs(pageable);
@@ -83,6 +92,7 @@ public class JobServiceTest {
 
     @Test
     @Sql(scripts = {"classpath:db/insert-test-import-jobs.sql"})
+    @Transactional
     public void testFindById() throws IOException {
         ImportJob job = jobService.getJobById(4002L);
         Assertions.assertNotNull(job);

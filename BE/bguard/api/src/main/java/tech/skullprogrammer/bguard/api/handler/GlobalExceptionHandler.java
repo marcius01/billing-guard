@@ -3,6 +3,8 @@ package tech.skullprogrammer.bguard.api.handler;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,9 +28,11 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     private HttpServletRequest request;
+    private String correlationKey;
 
-    public GlobalExceptionHandler(HttpServletRequest request) {
+    public GlobalExceptionHandler(HttpServletRequest request, @Value("${skullprogrammer.observability.mdc.key}") String correlationKey) {
         this.request = request;
+        this.correlationKey = correlationKey;
     }
 
     @ExceptionHandler(SkullException.class)
@@ -69,13 +73,14 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ErrorResponse> handleDefaultException(Exception e, SkullException.ErrorType errorType, Map<String, @Nullable String> payload) {
+        String correlationId = MDC.get(correlationKey);
         if (payload == null) payload = Map.of("original_message", e.getMessage());
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .message(e.getMessage())
                 .timestamp(LocalDateTime.now())
                 .status(errorType.getHttpStatus().value())
                 .path(request.getRequestURI())
-                .correlationId(UUID.randomUUID().toString())
+                .correlationId(correlationId)
                 .error(errorType)
                 .payload(payload)
                 .build();
